@@ -1,32 +1,42 @@
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, CreditCard, Lock, Users } from "lucide-react"
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Calendar, CreditCard, Lock, Users } from "lucide-react";
 
 export default async function HomePage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (user) {
-    redirect("/dashboard")
+    redirect("/dashboard");
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-primary">Billy</h1>
+          <h1 className="text-2xl font-bold text-primary">
+            {" "}
+            <Image
+              src="/android-chrome512.png"
+              alt="Billy Logo"
+              width={52}
+              height={52}
+              className="h-12 w-12"
+            />
+          </h1>
           <div className="flex gap-2">
             <Link href="/auth/login">
               <Button variant="ghost">Sign in</Button>
             </Link>
             <Link href="/auth/sign-up">
-              <Button>Get Started</Button>
+              <Button className="bg-[#0A0]">Get Started</Button>
             </Link>
           </div>
         </div>
@@ -35,14 +45,16 @@ export default async function HomePage() {
       <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-4xl font-bold tracking-tight sm:text-6xl">
-            Never miss a <span className="text-primary">bill payment</span> again
+            Never miss a <span className="text-primary">bill payment</span>{" "}
+            again
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Billy helps you track all your bills, manage creditors, and keep your login information secure in one place.
+            Billy helps you track all your bills, manage creditors, and keep
+            your login information secure in one place.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link href="/auth/sign-up">
-              <Button size="lg">Start Tracking Bills</Button>
+              <Button size="lg" className="bg-[#0A0]">Start Tracking Bills</Button>
             </Link>
             <Link href="/auth/login">
               <Button size="lg" variant="outline">
@@ -60,7 +72,8 @@ export default async function HomePage() {
               </div>
               <h3 className="mb-2 font-semibold">Calendar View</h3>
               <p className="text-sm text-muted-foreground">
-                See all your bills on a visual calendar with due dates clearly marked
+                See all your bills on a visual calendar with due dates clearly
+                marked
               </p>
             </CardContent>
           </Card>
@@ -72,7 +85,8 @@ export default async function HomePage() {
               </div>
               <h3 className="mb-2 font-semibold">Bill Tracking</h3>
               <p className="text-sm text-muted-foreground">
-                Track payment dates, amounts, and mark bills as paid with one click
+                Track payment dates, amounts, and mark bills as paid with one
+                click
               </p>
             </CardContent>
           </Card>
@@ -103,5 +117,5 @@ export default async function HomePage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

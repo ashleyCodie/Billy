@@ -159,7 +159,7 @@ export default async function DashboardPage() {
                   You don't have any bills due in the next 30 days.
                 </p>
                 <Link href="/bills">
-                  <Button>Add Your First Bill</Button>
+                  <Button className="bg-[#0A0]">Add Your First Bill</Button>
                 </Link>
               </CardContent>
             </Card>

@@ -4,7 +4,7 @@ export interface Creditor {
   name: string
   website?: string
   phone?: string
-  accountNumber?: string
+  account_number?: string
   notes?: string
   created_at: string
   updated_at: string
@@ -16,7 +16,7 @@ export interface Bill {
   creditor_id: string
   name: string
   amount: number
-  accountNumber: string
+  account_number: string
   due_date: string
   is_paid: boolean
   paid_date?: string

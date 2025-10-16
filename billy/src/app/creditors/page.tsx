@@ -1,5 +1,8 @@
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
+"use client"
+
+import { createClient } from "@/lib/supabase/client" // Changed from server to client
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation" // Changed from redirect
 import { Navbar } from "@/components/Navbar"
 import { CreditorDialog } from "@/components/Creditor-dialog"
 import { CreditorCard } from "@/components/Creditor-card"
@@ -7,33 +10,66 @@ import type { Creditor } from "@/lib/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Users } from "lucide-react"
 
-export default async function CreditorsPage() {
-  const supabase = await createClient()
+export default function CreditorsPage() { // Removed async
+  const [creditors, setCreditors] = useState<Creditor[]>([])
+  const [loading, setLoading] = useState(true)
+  const [creditorBillCounts, setCreditorBillCounts] = useState<Record<string, number>>({})
+  const router = useRouter()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  useEffect(() => {
+    async function fetchData() {
+      const supabase = createClient()
+      
+      // Check if user is logged in
+      const { data: { user } } = await supabase.auth.getUser()
+      console.log('Current user:', user)
 
-  if (!user) {
-    redirect("/auth/login")
-  }
+      if (!user) {
+        router.push("/auth/login")
+        return
+      }
 
-  const { data: creditors } = await supabase
-    .from("creditors")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("name", { ascending: true })
+      // Fetch creditors
+      const { data: creditorsData, error: creditorsError } = await supabase
+        .from('creditors')
+        .select('*')
+      
+      if (creditorsError) {
+        console.error('Error fetching creditors:', creditorsError)
+        setLoading(false)
+        return
+      }
 
-  // Get bill counts for each creditor
-  const creditorBillCounts: Record<string, number> = {}
-  if (creditors) {
-    for (const creditor of creditors) {
-      const { count } = await supabase
-        .from("bills")
-        .select("*", { count: "exact", head: true })
-        .eq("creditor_id", creditor.id)
-      creditorBillCounts[creditor.id] = count || 0
+      setCreditors(creditorsData || [])
+
+      // Fetch bill counts for each creditor
+      if (creditorsData) {
+        const counts: Record<string, number> = {}
+        
+        for (const creditor of creditorsData) {
+          const { count } = await supabase
+            .from("bills")
+            .select("*", { count: "exact", head: true })
+            .eq("creditor_id", creditor.id)
+          
+          counts[creditor.id] = count || 0
+        }
+        
+        setCreditorBillCounts(counts)
+      }
+      
+      setLoading(false)
     }
+
+    fetchData()
+  }, [router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    )
   }
 
   return (
@@ -53,7 +89,7 @@ export default async function CreditorsPage() {
             {creditors.map((creditor) => (
               <CreditorCard
                 key={creditor.id}
-                creditor={creditor as Creditor}
+                creditor={creditor}
                 billCount={creditorBillCounts[creditor.id] || 0}
               />
             ))}

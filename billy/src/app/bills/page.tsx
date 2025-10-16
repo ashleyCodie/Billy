@@ -8,6 +8,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { CreditCard } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function BillsPage() {
   const supabase = await createClient()
 
@@ -19,7 +22,9 @@ export default async function BillsPage() {
     redirect("/auth/login")
   }
 
-  const { data: allBills } = await supabase
+  console.log('Fetching bills for user:', user.id)
+
+  const { data: allBills, error } = await supabase
     .from("bills")
     .select(
       `
@@ -30,12 +35,20 @@ export default async function BillsPage() {
     .eq("user_id", user.id)
     .order("due_date", { ascending: true })
 
+      console.log('All bills fetched:', allBills)
+ console.log('Fetch error:', JSON.stringify(Error, null, 2))
+  console.log('Number of bills:', allBills?.length)
+
   const today = new Date().toISOString().split("T")[0]
 
   const upcomingBills = allBills?.filter((bill) => !bill.is_paid && bill.due_date >= today) || []
   const overdueBills = allBills?.filter((bill) => !bill.is_paid && bill.due_date < today) || []
   const paidBills = allBills?.filter((bill) => bill.is_paid) || []
 
+
+    console.log('Upcoming:', upcomingBills.length)
+  console.log('Overdue:', overdueBills.length)  
+  console.log('Paid:', paidBills.length)
   return (
     <div className="min-h-screen bg-background">
       <Navbar />

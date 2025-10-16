@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Calendar, CreditCard, Home, LogOut, Users } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 
 export function Navbar() {
@@ -27,9 +28,16 @@ export function Navbar() {
     <nav className="border-b bg-background">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
-          <Link href="/dashboard" className="text-2xl font-bold text-primary">
-            Billy
-          </Link>
+       <Link href="/dashboard" className="flex items-center gap-2">
+          <Image 
+            src="/android-chrome512.png" 
+            alt="Billy Logo" 
+            width={52} 
+            height={52}
+            className="h-12 w-12"
+          />
+          {/* <span className="text-xl font-bold">Billy</span> */}
+        </Link>
           <div className="hidden items-center gap-1 md:flex">
             {navItems.map((item) => {
               const Icon = item.icon

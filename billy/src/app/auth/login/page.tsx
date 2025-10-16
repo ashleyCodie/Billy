@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import Image from "next/image";
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
@@ -62,7 +63,15 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold">Billy</CardTitle>
+            <CardTitle className="text-3xl font-bold">
+                     <Image
+                              src="/android-chrome512.png"
+                              alt="Billy Logo"
+                              width={52}
+                              height={52}
+                              className="h-12 w-12 ml-36"
+                            />
+            </CardTitle>
             <CardDescription>Sign in to manage your bills</CardDescription>
           </CardHeader>
           <CardContent>
@@ -146,7 +155,7 @@ export default function LoginPage() {
                   />
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-[#0A0]" disabled={isLoading}>
                   {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </div>

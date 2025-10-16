@@ -31,7 +31,7 @@ export function CreditorDialog({ creditor, trigger }: CreditorDialogProps) {
   const [name, setName] = useState(creditor?.name || "")
   const [website, setWebsite] = useState(creditor?.website || "")
   const [phone, setPhone] = useState(creditor?.phone || "")
-  const [accountNumber, setAccountNumber] = useState(creditor?.accountNumber || "")
+  const [accountNumber, setAccountNumber] = useState(creditor?.account_number || "") // Changed
   const [notes, setNotes] = useState(creditor?.notes || "")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -54,7 +54,7 @@ export function CreditorDialog({ creditor, trigger }: CreditorDialogProps) {
           name,
           website: website || null,
           phone: phone || null,
-          accountNumber: accountNumber || null,
+          account_number: accountNumber || null, // Changed from accountNumber
           notes: notes || null,
           updated_at: new Date().toISOString(),
         })
@@ -70,7 +70,7 @@ export function CreditorDialog({ creditor, trigger }: CreditorDialogProps) {
         name,
         website: website || null,
         phone: phone || null,
-        accountNumber: accountNumber || null,
+        account_number: accountNumber || null, // Changed from accountNumber
         notes: notes || null,
       })
 
@@ -92,7 +92,7 @@ export function CreditorDialog({ creditor, trigger }: CreditorDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="gap-2">
+          <Button className="gap-2 bg-[#0A0]">
             <Plus className="h-4 w-4" />
             Add Creditor
           </Button>
@@ -137,7 +137,7 @@ export function CreditorDialog({ creditor, trigger }: CreditorDialogProps) {
                 onChange={(e) => setPhone(e.target.value)}
               />
             </div>
-                <div className="grid gap-2">
+            <div className="grid gap-2">
               <Label htmlFor="accountNumber">Account #</Label>
               <Input
                 id="accountNumber"
@@ -162,7 +162,7 @@ export function CreditorDialog({ creditor, trigger }: CreditorDialogProps) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" className="bg-[#0A0]" disabled={isLoading}>
               {isLoading ? "Saving..." : creditor ? "Update" : "Add Creditor"}
             </Button>
           </DialogFooter>

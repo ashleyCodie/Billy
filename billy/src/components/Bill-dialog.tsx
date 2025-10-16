@@ -63,65 +63,83 @@ export function BillDialog({ bill, trigger }: BillDialogProps) {
     }
   }, [open])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setIsLoading(true)
 
-    const supabase = createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+  const supabase = createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-    if (!user) return
-
-    const billData = {
-      name,
-      creditor_id: creditorId,
-      amount: Number.parseFloat(amount),
-      due_date: dueDate,
-      is_paid: isPaid,
-      paid_date: isPaid ? new Date().toISOString().split("T")[0] : null,
-      login_username: loginUsername || null,
-      login_password: loginPassword || null,
-      notes: notes || null,
-      updated_at: new Date().toISOString(),
-    }
-
-    if (bill) {
-      const { error } = await supabase.from("bills").update(billData).eq("id", bill.id)
-
-      if (!error) {
-        setOpen(false)
-        router.refresh()
-      }
-    } else {
-      const { error } = await supabase.from("bills").insert({
-        ...billData,
-        user_id: user.id,
-      })
-
-      if (!error) {
-        setOpen(false)
-        setName("")
-        setCreditorId("")
-        setAmount("")
-        setDueDate("")
-        setIsPaid(false)
-        setLoginUsername("")
-        setLoginPassword("")
-        setNotes("")
-        router.refresh()
-      }
-    }
-
+  if (!user) {
+    console.error('No user found!')
     setIsLoading(false)
+    return
   }
+
+  console.log('User ID:', user.id)
+  console.log('User ID type:', typeof user.id)
+
+  const billData = {
+    name,
+    creditor_id: creditorId,
+    amount: Number.parseFloat(amount),
+    due_date: dueDate,
+    is_paid: isPaid,
+    paid_date: isPaid ? new Date().toISOString().split("T")[0] : null,
+    login_username: loginUsername || null,
+    login_password: loginPassword || null,
+    notes: notes || null,
+    updated_at: new Date().toISOString(),
+  }
+
+  if (bill) {
+    const { error } = await supabase.from("bills").update(billData).eq("id", bill.id)
+
+    if (error) {
+      console.error('Update error:', error)
+    } else {
+      setOpen(false)
+      window.location.reload()
+    }
+  } else {
+    const dataToInsert = {
+      ...billData,
+      user_id: user.id,
+    }
+    
+    console.log('Data being inserted:', dataToInsert)
+    
+    const { data, error } = await supabase.from("bills").insert(dataToInsert).select()
+
+    if (error) {
+      console.error('Insert error:', error)
+      console.error('Error code:', error.code)
+      console.error('Error message:', error.message)
+    } else {
+      console.log('Successfully inserted:', data)
+      setOpen(false)
+      setName("")
+      setCreditorId("")
+      setAmount("")
+      setDueDate("")
+      setIsPaid(false)
+      setLoginUsername("")
+      setLoginPassword("")
+      setNotes("")
+      window.location.reload()
+    }
+  }
+
+  setIsLoading(false)
+}
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="gap-2">
+          <Button className="gap-2 bg-[#0A0]">
             <Plus className="h-4 w-4" />
             Add Bill
           </Button>
@@ -236,7 +254,7 @@ export function BillDialog({ bill, trigger }: BillDialogProps) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading || creditors.length === 0}>
+            <Button type="submit" className="bg-[#0A0]" disabled={isLoading || creditors.length === 0}>
               {isLoading ? "Saving..." : bill ? "Update" : "Add Bill"}
             </Button>
           </DialogFooter>

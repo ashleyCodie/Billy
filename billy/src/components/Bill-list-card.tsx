@@ -60,7 +60,7 @@ export function BillListCard({ bill }: BillListCardProps) {
     const { error } = await supabase.from("bills").delete().eq("id", bill.id)
 
     if (!error) {
-      router.refresh()
+      window.location.reload()
     }
     setIsDeleting(false)
   }

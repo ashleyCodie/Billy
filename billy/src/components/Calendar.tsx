@@ -79,8 +79,8 @@ export function Calendar({ bills }: CalendarProps) {
                 bill.is_paid ? "bg-secondary text-secondary-foreground" : "bg-primary text-primary-foreground"
               }`}
             >
-              <div className="truncate font-medium">{bill.name}</div>
-              <div className="truncate">${bill.amount.toFixed(2)}</div>
+              <div className="truncate font-medium bg-[#FF5]">{bill.name}</div>
+              <div className="truncate bg-[#FF5]">${bill.amount.toFixed(2)}</div>
             </div>
           ))}
         </div>

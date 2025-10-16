@@ -3,7 +3,7 @@
 import type { Creditor } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Globe, Phone, Pencil, Trash2 } from "lucide-react"
+import { Globe, Phone, Pencil, Trash2, Hash } from "lucide-react"
 import { CreditorDialog } from "./Creditor-dialog"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -101,10 +101,10 @@ export function CreditorCard({ creditor, billCount }: CreditorCardProps) {
               <span>{creditor.phone}</span>
             </div>
           )}
-           {creditor.accountNumber && (
+           {creditor.account_number && (
             <div className="flex items-center gap-2 text-sm">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              <span>{creditor.accountNumber}</span>
+              <Hash className="h-4 w-4 text-muted-foreground" />
+              <span>{creditor.account_number}</span>
             </div>
           )}
           {creditor.notes && (
