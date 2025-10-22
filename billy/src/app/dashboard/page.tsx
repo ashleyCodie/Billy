@@ -68,7 +68,7 @@ export default async function DashboardPage() {
       <main className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back! Here's your bill overview.</p>
+          <p className="text-muted-foreground">Welcome back! Here&apos;s your bill overview.</p>
         </div>
 
         {/* Stats Grid */}
@@ -156,7 +156,7 @@ export default async function DashboardPage() {
                 <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
                 <h3 className="mb-2 text-lg font-semibold">No upcoming bills</h3>
                 <p className="mb-4 text-center text-sm text-muted-foreground">
-                  You don't have any bills due in the next 30 days.
+                  You don&apos;t have any bills due in the next 30 days.
                 </p>
                 <Link href="/bills">
                   <Button className="bg-[#0A0]">Add Your First Bill</Button>
