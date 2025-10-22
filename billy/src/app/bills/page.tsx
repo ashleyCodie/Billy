@@ -22,12 +22,12 @@ export default async function BillsPage() {
   if (!user) {
     redirect("/auth/login")
   }
-  
+
   await generateRecurringBills(supabase, user.id)
 
   console.log('Fetching bills for user:', user.id)
 
-  const { data: allBills, error } = await supabase
+  const { data: allBills } = await supabase
     .from("bills")
     .select(
       `
@@ -84,7 +84,7 @@ export default async function BillsPage() {
                   <CreditCard className="mb-4 h-12 w-12 text-muted-foreground" />
                   <h3 className="mb-2 text-lg font-semibold">No upcoming bills</h3>
                   <p className="mb-4 text-center text-sm text-muted-foreground">
-                    You don't have any upcoming bills to pay
+                    You don&apos;t have any upcoming bills to pay
                   </p>
                   <BillDialog />
                 </CardContent>
