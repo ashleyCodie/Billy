@@ -16,14 +16,16 @@ export interface Bill {
   creditor_id: string
   name: string
   amount: number
-  account_number: string
   due_date: string
   is_paid: boolean
   paid_date?: string
   login_username?: string
   login_password?: string
   notes?: string
-  created_at: string
-  updated_at: string
+  is_recurring: boolean
+  recurrence_frequency?: 'weekly' | 'monthly' | 'yearly'
+  recurrence_day?: number
+  created_at?: string
+  updated_at?: string
   creditor?: Creditor
 }

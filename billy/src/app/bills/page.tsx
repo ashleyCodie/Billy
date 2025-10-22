@@ -7,6 +7,7 @@ import type { Bill } from "@/lib/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { CreditCard } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { generateRecurringBills } from "@/lib/utils/recurring-bills" 
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -21,6 +22,8 @@ export default async function BillsPage() {
   if (!user) {
     redirect("/auth/login")
   }
+  
+  await generateRecurringBills(supabase, user.id)
 
   console.log('Fetching bills for user:', user.id)
 

@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -36,6 +35,9 @@ export function BillDialog({ bill, trigger }: BillDialogProps) {
   const [amount, setAmount] = useState(bill?.amount.toString() || "")
   const [dueDate, setDueDate] = useState(bill?.due_date || "")
   const [isPaid, setIsPaid] = useState(bill?.is_paid || false)
+  const [isRecurring, setIsRecurring] = useState(bill?.is_recurring || false)
+  const [recurrenceFrequency, setRecurrenceFrequency] = useState<string>(bill?.recurrence_frequency || "monthly")
+  const [recurrenceDay, setRecurrenceDay] = useState(bill?.recurrence_day?.toString() || "1")
   const [loginUsername, setLoginUsername] = useState(bill?.login_username || "")
   const [loginPassword, setLoginPassword] = useState(bill?.login_password || "")
   const [notes, setNotes] = useState(bill?.notes || "")
@@ -63,77 +65,74 @@ export function BillDialog({ bill, trigger }: BillDialogProps) {
     }
   }, [open])
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setIsLoading(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
 
-  const supabase = createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    const supabase = createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-  if (!user) {
-    console.error('No user found!')
+    if (!user) {
+      setIsLoading(false)
+      return
+    }
+
+    const billData = {
+      name,
+      creditor_id: creditorId,
+      amount: Number.parseFloat(amount),
+      due_date: dueDate,
+      is_paid: isPaid,
+      paid_date: isPaid ? new Date().toISOString().split("T")[0] : null,
+      is_recurring: isRecurring,
+      recurrence_frequency: isRecurring ? recurrenceFrequency : null,
+      recurrence_day: isRecurring ? Number.parseInt(recurrenceDay) : null,
+      login_username: loginUsername || null,
+      login_password: loginPassword || null,
+      notes: notes || null,
+      updated_at: new Date().toISOString(),
+    }
+
+    if (bill) {
+      const { error } = await supabase.from("bills").update(billData).eq("id", bill.id)
+
+      if (error) {
+        console.error('Update error:', error)
+      } else {
+        setOpen(false)
+        window.location.reload()
+      }
+    } else {
+      const dataToInsert = {
+        ...billData,
+        user_id: user.id,
+      }
+
+      const { error } = await supabase.from("bills").insert(dataToInsert)
+
+      if (error) {
+        console.error('Insert error:', error)
+      } else {
+        setOpen(false)
+        setName("")
+        setCreditorId("")
+        setAmount("")
+        setDueDate("")
+        setIsPaid(false)
+        setIsRecurring(false)
+        setRecurrenceFrequency("monthly")
+        setRecurrenceDay("1")
+        setLoginUsername("")
+        setLoginPassword("")
+        setNotes("")
+        window.location.reload()
+      }
+    }
+
     setIsLoading(false)
-    return
   }
-
-  console.log('User ID:', user.id)
-  console.log('User ID type:', typeof user.id)
-
-  const billData = {
-    name,
-    creditor_id: creditorId,
-    amount: Number.parseFloat(amount),
-    due_date: dueDate,
-    is_paid: isPaid,
-    paid_date: isPaid ? new Date().toISOString().split("T")[0] : null,
-    login_username: loginUsername || null,
-    login_password: loginPassword || null,
-    notes: notes || null,
-    updated_at: new Date().toISOString(),
-  }
-
-  if (bill) {
-    const { error } = await supabase.from("bills").update(billData).eq("id", bill.id)
-
-    if (error) {
-      console.error('Update error:', error)
-    } else {
-      setOpen(false)
-      window.location.reload()
-    }
-  } else {
-    const dataToInsert = {
-      ...billData,
-      user_id: user.id,
-    }
-    
-    console.log('Data being inserted:', dataToInsert)
-    
-    const { data, error } = await supabase.from("bills").insert(dataToInsert).select()
-
-    if (error) {
-      console.error('Insert error:', error)
-      console.error('Error code:', error.code)
-      console.error('Error message:', error.message)
-    } else {
-      console.log('Successfully inserted:', data)
-      setOpen(false)
-      setName("")
-      setCreditorId("")
-      setAmount("")
-      setDueDate("")
-      setIsPaid(false)
-      setLoginUsername("")
-      setLoginPassword("")
-      setNotes("")
-      window.location.reload()
-    }
-  }
-
-  setIsLoading(false)
-}
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -214,6 +213,54 @@ export function BillDialog({ bill, trigger }: BillDialogProps) {
               <Label htmlFor="is-paid" className="cursor-pointer font-normal">
                 Mark as paid
               </Label>
+            </div>
+
+            {/* Recurring Bill Section */}
+            <div className="space-y-4 rounded-lg border p-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="is-recurring" 
+                  checked={isRecurring} 
+                  onCheckedChange={(checked) => setIsRecurring(checked as boolean)} 
+                />
+                <Label htmlFor="is-recurring" className="cursor-pointer font-medium">
+                  Recurring Bill
+                </Label>
+              </div>
+
+              {isRecurring && (
+                <div className="space-y-4 pl-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="frequency">Frequency</Label>
+                    <Select value={recurrenceFrequency} onValueChange={setRecurrenceFrequency}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="yearly">Yearly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="recurrence-day">
+                      {recurrenceFrequency === 'monthly' ? 'Day of Month (1-31)' : 
+                       recurrenceFrequency === 'weekly' ? 'Day of Week (1=Monday, 7=Sunday)' : 
+                       'Day of Year (1-365)'}
+                    </Label>
+                    <Input
+                      id="recurrence-day"
+                      type="number"
+                      min="1"
+                      max={recurrenceFrequency === 'monthly' ? '31' : recurrenceFrequency === 'weekly' ? '7' : '365'}
+                      value={recurrenceDay}
+                      onChange={(e) => setRecurrenceDay(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4 rounded-lg border p-4">
