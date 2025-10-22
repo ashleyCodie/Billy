@@ -31,26 +31,26 @@ export async function generateRecurringBills(supabase: SupabaseClient, userId: s
 
     // Generate future bills based on frequency
     const billsToCreate = []
-    let currentDate = new Date(lastDueDate)
+   let iterationDate = new Date(lastDueDate)
 
-    while (currentDate <= threeMonthsFromNow) {
+    while (iterationDate <= threeMonthsFromNow) {
       // Calculate next due date based on frequency
       if (bill.recurrence_frequency === "monthly") {
-        currentDate.setMonth(currentDate.getMonth() + 1)
+        iterationDate.setMonth(iterationDate.getMonth() + 1)
       } else if (bill.recurrence_frequency === "weekly") {
-        currentDate.setDate(currentDate.getDate() + 7)
+        iterationDate.setDate(iterationDate.getDate() + 7)
       } else if (bill.recurrence_frequency === "yearly") {
-        currentDate.setFullYear(currentDate.getFullYear() + 1)
+        iterationDate.setFullYear(iterationDate.getFullYear() + 1)
       }
 
-      if (currentDate <= threeMonthsFromNow) {
+      if (iterationDate <= threeMonthsFromNow) {
         // Check if this bill already exists
         const { data: existingBill } = await supabase
           .from("bills")
           .select("id")
           .eq("creditor_id", bill.creditor_id)
           .eq("name", bill.name)
-          .eq("due_date", currentDate.toISOString().split("T")[0])
+          .eq("due_date", iterationDate.toISOString().split("T")[0])
           .maybeSingle()
 
         if (!existingBill) {
@@ -59,7 +59,7 @@ export async function generateRecurringBills(supabase: SupabaseClient, userId: s
             creditor_id: bill.creditor_id,
             name: bill.name,
             amount: bill.amount,
-            due_date: currentDate.toISOString().split("T")[0],
+            due_date: iterationDate.toISOString().split("T")[0],
             is_paid: false,
             paid_date: null,
             is_recurring: true,

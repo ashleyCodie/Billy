@@ -18,7 +18,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createClient } from "@/lib/supabase/client"
 import type { Bill, Creditor } from "@/lib/types"
 import { Plus } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -42,7 +41,7 @@ export function BillDialog({ bill, trigger }: BillDialogProps) {
   const [loginPassword, setLoginPassword] = useState(bill?.login_password || "")
   const [notes, setNotes] = useState(bill?.notes || "")
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+
 
   useEffect(() => {
     const fetchCreditors = async () => {
