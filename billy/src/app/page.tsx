@@ -22,7 +22,6 @@ export default async function HomePage() {
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-bold text-primary">
-            {" "}
             <Image
               src="/android-chrome512.png"
               alt="Billy Logo"
@@ -35,7 +34,7 @@ export default async function HomePage() {
             <Link href="/auth/login">
               <Button variant="ghost">Sign in</Button>
             </Link>
-            <Link href="/auth/sign-up">
+            <Link href="/auth/signup">
               <Button className="bg-[#0A0]">Get Started</Button>
             </Link>
           </div>
@@ -53,7 +52,7 @@ export default async function HomePage() {
             your login information secure in one place.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
-            <Link href="/auth/sign-up">
+            <Link href="/auth/signup">
               <Button size="lg" className="bg-[#0A0]">Start Tracking Bills</Button>
             </Link>
             <Link href="/auth/login">
@@ -61,6 +60,18 @@ export default async function HomePage() {
                 Sign In
               </Button>
             </Link>
+          </div>
+
+          {/* Image under buttons */}
+          <div className="mt-16 flex justify-center">
+            <Image 
+              src="/bILLY.JPG" 
+              alt="Billy Dashboard Preview" 
+              width={800} 
+              height={400}
+              className="rounded-xl shadow-2xl border border-border"
+              priority
+            />
           </div>
         </div>
 

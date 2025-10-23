@@ -32,9 +32,9 @@ export function Navbar() {
           <Image 
             src="/android-chrome512.png" 
             alt="Billy Logo" 
-            width={52} 
-            height={52}
-            className="h-12 w-12"
+            width={64} 
+            height={64}
+            className="h-16 w-16"
           />
           {/* <span className="text-xl font-bold">Billy</span> */}
         </Link>
